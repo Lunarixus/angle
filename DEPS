@@ -918,11 +918,6 @@ deps = {
     'condition': 'checkout_android and not build_with_chromium',
   },
 
-  'third_party/SwiftShader': {
-    'url': Var('swiftshader_git') + '/SwiftShader@76f7f8cfea80d26fa41d51f52cfbade49ec1f838',
-    'condition': 'not build_with_chromium',
-  },
-
   'third_party/turbine': {
       'packages': [
           {
