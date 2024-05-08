@@ -151,7 +151,7 @@ void TDirectiveHandler::handleExtension(const angle::pp::SourceLocation &loc,
     }
 
     TExtensionBehavior::iterator iter = mExtensionBehavior.find(GetExtensionByName(name.c_str()));
-    if (iter != mExtensionBehavior.end() && CheckExtensionVersion(iter->first, mShaderVersion))
+    if (iter != mExtensionBehavior.end()
     {
         iter->second = behaviorVal;
         // OVR_multiview is implicitly enabled when OVR_multiview2 is enabled
