@@ -469,9 +469,6 @@ const TSymbol *SymbolRule::get(ShShaderSpec shaderSpec,
                                const ShBuiltInResources &resources,
                                const TSymbolTableBase &symbolTable) const
 {
-    if (IsDesktopGLSpec(shaderSpec) != (mIsDesktop == 1))
-        return nullptr;
-
     if (mVersion == kESSL1Only && shaderVersion != static_cast<int>(kESSL1Only))
         return nullptr;
 

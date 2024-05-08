@@ -5295,14 +5295,6 @@ bool ValidateDrawBuffersBase(const Context *context,
             ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kExceedsMaxColorAttachments);
             return false;
         }
-        else if (bufs[colorAttachment] != GL_NONE && bufs[colorAttachment] != attachment &&
-                 frameBufferId.value != 0)
-        {
-            // INVALID_OPERATION-GL is bound to buffer and ith argument
-            // is not COLOR_ATTACHMENTi or NONE
-            ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kInvalidDrawBufferValue);
-            return false;
-        }
     }
 
     // INVALID_OPERATION is generated if GL is bound to the default framebuffer
