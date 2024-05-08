@@ -7044,6 +7044,45 @@ bool TParseContext::isMultiplicationTypeCombinationValid(TOperator op,
     }
 }
 
+void TParseContext::addImplicitIntToFloat(TOperator op,
+                                          TIntermTyped **leftPtr,
+                                          TIntermTyped **rightPtr,
+                                          const TSourceLoc &loc)
+{
+    TIntermTyped *left = *leftPtr;
+    TIntermTyped *right = *rightPtr;
+    ImplicitTypeConversion conversion = GetConversion(left->getBasicType(), right->getBasicType());
+    switch (conversion)
+    {
+        case ImplicitTypeConversion::Left:
+        {
+            //warning(loc, "implicit conversion left is int", GetOperatorString(op));
+            markStaticReadIfSymbol(left);
+            TIntermSequence arguments = { left->deepCopy() }; // FIXME: need deepCopy?
+            TType type = left->getType();
+            type.setBasicType(EbtFloat);
+            TIntermAggregate *converted = TIntermAggregate::CreateConstructor(type, &arguments);
+            converted->setLine(loc);
+            *leftPtr = converted;
+            return;
+        }
+        case ImplicitTypeConversion::Right:
+        {
+            //warning(loc, "implicit conversion right is int", GetOperatorString(op));
+            markStaticReadIfSymbol(right);
+            TIntermSequence arguments = { right->deepCopy() }; // FIXME: need deepCopy?
+            TType type = right->getType();
+            type.setBasicType(EbtFloat);
+            TIntermAggregate *converted = TIntermAggregate::CreateConstructor(type, &arguments);
+            converted->setLine(loc);
+            *rightPtr = converted;
+            return;
+        }
+        default:
+            return;
+    }
+}
+
 TIntermTyped *TParseContext::addBinaryMathInternal(TOperator op,
                                                    TIntermTyped *left,
                                                    TIntermTyped *right,
@@ -7097,6 +7136,7 @@ TIntermTyped *TParseContext::addBinaryMathInternal(TOperator op,
             break;
     }
 
+    addImplicitIntToFloat(op, &left, &right, loc);
     if (op == EOpMul)
     {
         op = TIntermBinary::GetMulOpBasedOnOperands(left->getType(), right->getType());
@@ -7106,6 +7146,7 @@ TIntermTyped *TParseContext::addBinaryMathInternal(TOperator op,
         }
     }
 
+    addImplicitIntToFloat(op, &left, &right, loc);
     TIntermBinary *node = new TIntermBinary(op, left, right);
     ASSERT(op != EOpAssign);
     markStaticReadIfSymbol(left);
